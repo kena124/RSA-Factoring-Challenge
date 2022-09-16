@@ -1,0 +1,85 @@
+#!/usr/bin/python3
+import sys
+import math
+
+def binPower(base, e, mod):
+    result = 1
+    base %= mod
+
+    while e:
+        if (e & 1):
+            result = result * base % mod
+        base = base * base % mod
+        e >>= 1
+    return result
+
+def checkComposite(num, a, d, s):
+    x = binPower(a, d, num)
+
+    if (x == 1 or x == num - 1):
+        return False
+
+    for r in range(1, s):
+        x = x * x % num
+        if x == num - 1:
+            return False
+    return True
+
+def isPrime(num):
+    if num < 2:
+        return false
+    r = 0
+    d = num - 1
+    lowprime = [2, 3, 5, 11, 13, 17, 19, 23, 29, 31, 37]
+    while (d & 1) == 0:
+        d >>= 1
+        r += 1
+    for a in lowprime:
+        if num == a:
+            return True
+        if checkComposite(num, a, d, r):
+            return False
+    return True
+
+def factor(string_num):
+    num = int(string_num)
+    root = int(math.sqrt(num))
+
+    if isPrime(num):
+        print("{}={}*{}".format(num, num, 1))
+        return
+
+    if num % 2 == 0:
+        print("{}={}*{}".format(num, num // 2, 2))
+        return
+    if num % 3 == 0:
+        print("{}={}*{}".format(num, num // 3, 3))
+        return
+    count = 5
+    while count <= root:
+        if num % count == 0:
+            print("{}={}*{}".format(num, num // count, count))
+            return
+        if num % (count + 2) == 0:
+            print("{}={}*{}".format(num, num // (count + 2), count + 2))
+            return
+        count += 6
+
+
+
+if __name__ == "__main__":
+    argv = sys.argv
+    length = len(argv)
+
+    if (length != 2):
+        print("Usage {}".format(argv[0]))
+        exit()
+
+    filename = argv[1]
+
+    with open(filename, 'r') as fs:
+        lines = fs.readlines()
+
+        for line in lines:
+            factor(line.strip())
+        fs.close()
